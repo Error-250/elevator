@@ -36,7 +36,7 @@ public class ElevatorLeader extends AbstractActor {
                     if(tasks.containsKey(elevatorMessage.floor + elevatorMessage.state.getDesc())) {
                         tasks.remove(elevatorMessage.floor + elevatorMessage.state.getDesc());
                         elevatorManager.setDisenbleRadio(elevatorMessage.floor, elevatorMessage.state);
-                        getSender().tell(new ElevatorActor.LeaderAnswer(tasks.size() > 0? TaskState.HasTask:TaskState.NoTask, ElevatorState.Stay), getSelf());
+                        getSender().tell(new ElevatorActor.LeaderAnswer(TaskState.HasTask, ElevatorState.Stay), getSelf());
                     }else {
                         if(tasks.size() > 0) {
                             String target = tasks.keySet().toArray()[0].toString();
@@ -48,7 +48,7 @@ public class ElevatorLeader extends AbstractActor {
                             if(targetFloor == elevatorMessage.floor)
                                 getSender().tell(new ElevatorActor.LeaderAnswer(TaskState.SelectTask, ElevatorState.Stay), getSelf());
                             else
-                                getSender().tell(new ElevatorActor.LeaderAnswer(tasks.size() > 0? TaskState.HasTask:TaskState.NoTask, targetFloor > elevatorMessage.floor ? ElevatorState.Up : ElevatorState.Down), getSelf());
+                                getSender().tell(new ElevatorActor.LeaderAnswer(TaskState.HasTask, targetFloor > elevatorMessage.floor ? ElevatorState.Up : ElevatorState.Down), getSelf());
                         }else {
                             getSender().tell(new ElevatorActor.LeaderAnswer(TaskState.NoTask, ElevatorState.Stay), getSelf());
                         }
