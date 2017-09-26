@@ -137,17 +137,25 @@ public class ElevatorActor extends AbstractActor {
                 })
                 .match(FloorMessage.class, floorMessage -> {
                     log.info("get floor message floor->{}", floorMessage.floor);
-                    if(state.equals(ElevatorState.Stay)) {
-                        que.put(floorMessage.floor, true);
-                        if(floor.getCode() < floorMessage.floor)
-                            changeState(ElevatorState.Up);
-                        if(floor.getCode() > floorMessage.floor)
-                            changeState(ElevatorState.Down);
-                        elevatorRun();
-                    } else if(state.equals(ElevatorState.Up) && floor.getCode() < floorMessage.floor) {
-                        que.put(floorMessage.floor, true);
-                    }else if(state.equals(ElevatorState.Down) && floor.getCode() > floorMessage.floor) {
-                        que.put(floorMessage.floor, true);
+                    if(floorMessage.floor == floor.getCode()) {
+                        elevator.setDisableBtn(FloorEnum.getFloorEnumByCode(floorMessage.floor).toString());
+                    }else {
+                        if(state.equals(ElevatorState.Stay)) {
+                            que.put(floorMessage.floor, true);
+                            if(floor.getCode() < floorMessage.floor)
+                                changeState(ElevatorState.Up);
+                            if(floor.getCode() > floorMessage.floor)
+                                changeState(ElevatorState.Down);
+                            elevatorRun();
+                            if(que.containsKey(floor.getCode())) {
+                                ElevatorState oldSate = elevatorStay();
+                                changeState(oldSate);
+                            }
+                        } else if(state.equals(ElevatorState.Up) && floor.getCode() < floorMessage.floor) {
+                            que.put(floorMessage.floor, true);
+                        }else if(state.equals(ElevatorState.Down) && floor.getCode() > floorMessage.floor) {
+                            que.put(floorMessage.floor, true);
+                        }
                     }
                 })
                 .build();
